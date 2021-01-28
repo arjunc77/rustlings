@@ -10,7 +10,6 @@ struct Person {
     age: usize,
 }
 
-// I AM NOT DONE
 
 // Steps:
 // 1. If the length of the provided string is 0 an error should be returned
@@ -25,6 +24,26 @@ struct Person {
 impl FromStr for Person {
     type Err = String;
     fn from_str(s: &str) -> Result<Person, Self::Err> {
+        match s.parse::<String>() {
+            Ok(s) => match s.len() == 0 {
+                true => return Err("Empty Person".into()),
+                false => { let name_age = s.split(",").collect::<Vec<&str>>(); 
+                           match name_age.len() != 2 {
+                               true => return Err("Not two args".into()),
+                               false => {  let name: String = name_age[0].parse().unwrap();
+                                           if name.len() == 0 {
+                                               return Err("Not two args".into())
+                                           }
+                                           match name_age[1].parse::<usize>() {
+                                               Ok(age) => return Ok(Person { name: name.to_string(), age }),
+                                               Err(_) => return Err("Age not provided".into())
+                                           }
+                                        }
+                          }
+                }
+            },
+            Err(e) => Err(e.to_string())
+        }
     }
 }
 

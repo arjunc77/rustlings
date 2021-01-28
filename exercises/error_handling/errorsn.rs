@@ -17,19 +17,38 @@
 //
 // Execute `rustlings hint errorsn` for hints :)
 
-// I AM NOT DONE
 
 use std::error;
 use std::fmt;
 use std::io;
 
+#[derive(Debug)]
+struct MyError(String);
+
+impl fmt::Display for MyError {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        f.write_str("No bytes read into the buffer")
+    }
+}
+
+impl error::Error for MyError {}
+
 // PositiveNonzeroInteger is a struct defined below the tests.
-fn read_and_validate(b: &mut dyn io::BufRead) -> Result<PositiveNonzeroInteger, ???> {
+fn read_and_validate(
+    b: &mut dyn io::BufRead,
+) -> Result<PositiveNonzeroInteger, Box<dyn error::Error>> {
     let mut line = String::new();
-    b.read_line(&mut line);
-    let num: i64 = line.trim().parse();
-    let answer = PositiveNonzeroInteger::new(num);
-    answer
+    match b.read_line(&mut line) {
+        Ok(0) => Err(Box::new(MyError("EOF".into()))),
+        Ok(okay) => match line.trim().parse::<i64>() { // some bytes read (may or may not be until the newline).
+            Ok(num) => {
+                let answer = PositiveNonzeroInteger::new(num)?;
+                return Ok(answer);
+            }
+            Err(e) => return Err(Box::new(e)),
+        },
+        Err(e) => Err(Box::new(e)),
+    }
 }
 
 //

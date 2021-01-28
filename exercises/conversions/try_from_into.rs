@@ -11,7 +11,6 @@ struct Color {
     blue: u8,
 }
 
-// I AM NOT DONE
 
 // Your task is to complete this implementation
 // and return an Ok result of inner type Color.
@@ -25,19 +24,60 @@ struct Color {
 // Tuple implementation
 impl TryFrom<(i16, i16, i16)> for Color {
     type Error = String;
-    fn try_from(tuple: (i16, i16, i16)) -> Result<Self, Self::Error> {}
+    fn try_from(tuple: (i16, i16, i16)) -> Result<Self, Self::Error> {
+
+        let mut conv: i16 = 0;
+        if 0 <= tuple.0 && tuple.0 <= 255 {
+            conv += 1;
+        }
+        if 0 <= tuple.1 && tuple.1 <= 255 {
+            conv += 1;
+        }
+        if 0 <= tuple.2 && tuple.2 <= 255 {
+            conv += 1;
+        }
+        if conv == 3 {
+            Ok(Color{ red: tuple.0 as u8, green: tuple.1 as u8, blue: tuple.2 as u8 })
+        } else {
+            Err("Not in hex range".to_string())
+        }
+    }
 }
 
 // Array implementation
 impl TryFrom<[i16; 3]> for Color {
     type Error = String;
-    fn try_from(arr: [i16; 3]) -> Result<Self, Self::Error> {}
+    fn try_from(arr: [i16; 3]) -> Result<Self, Self::Error> {
+        let mut conv: i16 = 0;
+        for ar in arr.iter() {
+            if 0 <= *ar && *ar <= 255 {
+                conv += 1;
+            }
+        }
+        if conv == 3 {
+            Ok(Color{ red: arr[0] as u8, green: arr[1] as u8, blue: arr[2] as u8 })
+        } else {
+            Err("Not in hex range".to_string())
+        }
+    }
 }
 
 // Slice implementation
 impl TryFrom<&[i16]> for Color {
     type Error = String;
-    fn try_from(slice: &[i16]) -> Result<Self, Self::Error> {}
+    fn try_from(slice: &[i16]) -> Result<Self, Self::Error> {
+        let mut conv: i16 = 0;
+        for ar in slice.iter() {
+            if 0 <= *ar && *ar <= 255 {
+                conv += 1;
+            }
+        }
+        if conv == 3 {
+            Ok(Color{ red: slice[0] as u8, green: slice[1] as u8, blue: slice[2] as u8 })
+        } else {
+            Err("Not in hex range".to_string())
+        }
+    }
 }
 
 fn main() {
